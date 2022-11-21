@@ -1,0 +1,65 @@
+{
+    "action-pack": {
+        "control-icon": "Toggle action tray",
+        "end-turn": "End Turn",
+        "action-type": {
+            "action": "Action",
+            "bonus": "Bonus Action",
+            "reaction": "Reaction",
+            "legendary": "Legendary Action",
+            "lair": "Lair Action",
+            "special": "Special"
+        },
+        "flag": {
+            "bonus": "B",
+            "bonus-title": "Bonus action",
+            "reaction": "R",
+            "reaction-title": "Reaction",
+            "ritual": "R",
+            "ritual-title": "Ritual",
+            "concentration": "C",
+            "concentration-title": "Concentration",
+            "legendary": "L",
+            "legendary-title": "Legendary action",
+            "unprepared": "U",
+            "unprepared-title": "Unprepared spell"
+        },
+        "category": {
+            "equipped": "Equipped",
+            "inventory": "Inventory",
+            "feature": "Feature",
+            "spell": "Spell",
+            "weapon": "Weapon",
+            "equipment": "Equipment",
+            "consumable": "Consumable",
+            "other": "Other",
+            "innate": "Innate Ability",
+            "spell0": "Cantrip",
+            "spell1": "Level 1",
+            "spell2": "Level 2",
+            "spell3": "Level 3",
+            "spell4": "Level 4",
+            "spell5": "Level 5",
+            "spell6": "Level 6",
+            "spell7": "Level 7",
+            "spell8": "Level 8",
+            "spell9": "Level 9"
+        },
+        "keybindings": {
+            "toggle-tray": "Toggle tray open or closed"
+        },
+        "settings": {
+            "tray-display": "Tray display mode",
+            "tray-display-auto": "Automatic",
+            "tray-display-toggle": "Toggle",
+            "tray-display-selected": "When token selected",
+            "tray-display-hint": "Toggle - only hide tray when toggled (using hot key) / When token selected - Hide the tray if no tokens are selected, show otherwise / Automatic - Toggle for players, When token selected for the GM",
+            "icon-size": "Icon size",
+            "icon-size-small": "Small",
+            "icon-size-medium": "Medium",
+            "icon-size-large": "Large",
+            "use-control-button": "Include a toggle button in token controls",
+            "show-no-uses": "Show items with no uses left"
+        }
+    }    
+}

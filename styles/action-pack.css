@@ -1,0 +1,227 @@
+#action-pack {
+    position: relative;
+    width: 0;
+    transition: width .5s;
+}
+
+#action-pack.is-open {
+    width: 300px;
+}
+
+.action-pack__container {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 300px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    z-index: 1;
+    padding: 10px;
+    overflow: auto;
+    transition: bottom 0.3s;
+}
+
+.is-current-combatant .action-pack__container {
+    bottom: 50px;
+}
+
+.action-pack__container h1 {
+    border: 0;
+    font-family: "Modesto Condensed", "Palatino Linotype", serif;
+    margin: 5px 0 0 0;
+}
+
+.action-pack__container h2 {
+    background-color: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 1px 6px;
+    margin: 10px -5px 4px -5px;
+    border-radius: 3px;
+    font-family: "Modesto Condensed", "Palatino Linotype", serif;
+    font-size: 18px;
+}
+
+.action-pack__container h3 {
+    border: 0;
+    font-size: 15px;
+    margin: 5px 0 3px 0;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 0.7);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.action-pack__actor + .action-pack__actor {
+    border-top: 1px solid rgba(255, 255, 255, 0.5);
+    margin-top: 15px;
+    padding-top: 10px;
+}
+
+.action-pack__abilities {
+    display: flex;
+    gap: 5px;
+    margin-top: 3px;
+}
+
+.action-pack__ability {
+    flex: 1;
+    padding: 3px 5px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    /* border-radius: 5px; */
+    text-transform: capitalize;
+    text-align: center;
+}
+
+.action-pack__actor .group-uses {
+    flex: 0;
+    align-self: flex-end;
+    background: rgba(255, 255, 255, 0.8);
+    color: black;
+    padding: 3px 6px;
+    border-radius: 5px;
+}
+
+.action-pack__items {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.action-pack__item {
+    margin-bottom: 3px;
+}
+
+.action-pack__item .item-name {
+    align-items: center;
+}
+
+.action-pack__item .item-name h4 {
+    margin: 0;
+}
+
+.action-pack__item .item-name .item-image {
+    flex: 0 0 36px;
+    height: 36px;
+    margin-right: 5px;
+    background-repeat: no-repeat;
+    background-size: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+}
+
+.small .action-pack__item .item-name .item-image {
+    flex: 0 0 30px;
+    height: 30px;
+}
+
+.large .action-pack__item .item-name .item-image {
+    flex: 0 0 42px;
+    height: 42px;
+}
+
+.action-pack__item .item-name:hover .item-image {
+    background-image: none !important;
+}
+
+.action-pack__item .item-name .item-image i {
+    display: none;
+    font-size: 24px;
+    opacity: 0.5;
+}
+
+.small .action-pack__item .item-name .item-image i {
+    font-size: 20px;
+}
+
+.large .action-pack__item .item-name .item-image i {
+    font-size: 28px;
+}
+
+.action-pack__item .item-name:hover .item-image i {
+    display: initial;
+}
+
+.action-pack__item .item-name .item-image:hover i {
+    opacity: 1;
+}
+
+.action-pack__item .flag {
+    flex: 0 0 20px;
+    height: 20px;
+    border-radius: 50%;
+    line-height: 21px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.action-pack__item .bonus, .action-pack__item .reaction {
+    background: rgba(255, 255, 255, 0.8);
+    color: black;
+}
+
+.action-pack__item .legendary {
+    background: rgba(255, 241, 166, 0.8);
+    color: black;
+}
+
+.action-pack__item .concentration, .action-pack__item .ritual {
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+}
+
+.action-pack__item .unprepared {
+    background: rgba(233, 47, 47, 0.5);
+    color: white;
+}
+
+.action-pack__item .item-summary {
+    display: none;
+    padding: 3px 10px;
+    margin-top: 4px 0 10px 0;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    font-size: 12px;
+    line-height: 16px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.action-pack__item .item-summary a {
+    color: black;
+}
+
+.action-pack__item .item-summary .item-properties .tag {
+    display: inline-block;
+    white-space: nowrap;
+    background: rgba(255, 255, 255, 0.7);
+    color: black;
+    margin: 0 3px 3px 0;
+    padding: 3px;
+    line-height: 1;
+    border-radius: 3px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+
+.action-pack__end-turn {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    height: 0px;
+    width: 300px;
+    z-index: 2;
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    text-align: center;
+    line-height: 50px;
+    font-size: 22px;
+    transition: height 0.3s;
+}
+
+.is-current-combatant .action-pack__end-turn {
+    height: 50px;
+}

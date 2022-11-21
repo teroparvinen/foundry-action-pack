@@ -1,0 +1,98 @@
+<div class="action-pack__container">
+    <div class="action-pack__actors {{iconSize}}">
+        {{#*inline "item-list"}}
+            <ul class="action-pack__items">
+                {{#each this}}
+                    <li class="action-pack__item item" data-item-uuid="{{item.uuid}}">
+                        <div class="item-name rollable flexrow">
+                            <div class="item-image" style="background-image: url('{{item.img}}')">
+                                <i class="fa fa-dice-d20"></i>
+                            </div>
+                            <h4>
+                                {{item.name}}
+                                {{#if (and uses (not (eq item.type "spell")))}}
+                                    ({{uses.available}}{{#if uses.maximum}}/{{uses.maximum}}{{/if}})
+                                {{/if}}
+                            </h4>
+
+                            {{#if item.data.data.components.ritual}}
+                                <div class="ritual flag" title="{{localize "action-pack.flag.ritual-title"}}">{{localize "action-pack.flag.ritual"}}</div>
+                            {{/if}}
+                            {{#if item.data.data.components.concentration}}
+                                <div class="concentration flag" title="{{localize "action-pack.flag.concentration-title"}}">{{localize "action-pack.flag.concentration"}}</div>
+                            {{/if}}
+
+                            {{#if (eq item.data.data.activation.type "bonus")}}
+                                <div class="bonus flag" title="{{localize "action-pack.flag.bonus-title"}}">{{localize "action-pack.flag.bonus"}}</div>
+                            {{/if}}
+                            {{#if (eq item.data.data.activation.type "reaction")}}
+                                <div class="reaction flag" title="{{localize "action-pack.flag.reaction-title"}}">{{localize "action-pack.flag.reaction"}}</div>
+                            {{/if}}
+                            {{#if (eq item.data.data.activation.type "legendary")}}
+                                <div class="legendary flag" title="{{localize "action-pack.flag.legendary-title"}}">{{localize "action-pack.flag.legendary"}}</div>
+                            {{/if}}
+
+                            {{#if (and (eq item.data.data.preparation.mode "prepared") (not item.data.data.preparation.prepared))}}
+                                <div class="unprepared flag" title="{{localize "action-pack.flag.unprepared-title"}}">{{localize "action-pack.flag.unprepared"}}</div>
+                            {{/if}}
+                        </div>
+                    </li>
+                {{/each}}
+            </ul>
+        {{/inline}}
+
+        {{#*inline "item-category"}}
+            <h2>{{localize title}}</h2>
+            {{#each groups as |group grounName|}}
+                {{> item-group }}
+            {{/each}}
+            {{#with items}}
+                {{> item-list }}
+            {{/with}}
+        {{/inline}}
+
+        {{#*inline "item-group"}}
+            {{#if items.length}}
+                <div class="flexrow">
+                    <h3>{{localize title}}</h3>
+                    {{#if uses}}
+                        <div class="group-uses">{{uses.available}}/{{uses.maximum}}</div>
+                    {{/if}}
+                </div>
+
+                {{#with items}}
+                    {{> item-list }}
+                {{/with}}
+            {{/if}}
+        {{/inline}}
+
+        {{#each actors}}
+            <div class="action-pack__actor" data-actor-uuid="{{actor.uuid}}">
+                <h1>{{name}}</h1>
+
+                <div class="action-pack__abilities">
+                    {{#each ../abilities as |abl abbr|}}
+                        <div class="action-pack__ability" data-ability="{{abbr}}" title="{{abl}}">{{abbr}}</div>                    
+                    {{/each}}
+                </div>
+
+                {{#with sections}}
+                    {{#with equipped}}
+                        {{> item-category}}
+                    {{/with}}
+                    {{#with feature}}
+                        {{> item-category}}
+                    {{/with}}
+                    {{#with spell}}
+                        {{> item-category}}
+                    {{/with}}
+                    {{#with inventory}}
+                        {{> item-category}}
+                    {{/with}}
+                {{/with}}
+            </div>
+        {{/each}}
+    </div>
+</div>
+
+<div class="action-pack__end-turn">{{localize "action-pack.end-turn"}}</div>
