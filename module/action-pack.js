@@ -356,7 +356,7 @@ async function updateTray() {
         event.preventDefault();
         const li = $(event.currentTarget).parents(".item");
         const item = await fromUuid(li.data("item-uuid"));
-        const chatData = item.getChatData({secrets: item.actor.isOwner});
+        const chatData = await item.getChatData({secrets: item.actor.isOwner});
     
         // Toggle summary
         if ( li.hasClass("expanded") ) {
