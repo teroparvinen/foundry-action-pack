@@ -195,7 +195,7 @@ Hooks.on('getSceneControlButtons', (controls) => {
 async function updateTray() {
     const actors = canvas.tokens.controlled.map(token => {
         const actor = token.actor;
-        const actorData = actor.data.data;
+        const actorData = actor.system;
 
         const canCastUnpreparedRituals = !!actor.items.find(i => i.name === "Wizard");
 
@@ -224,7 +224,7 @@ async function updateTray() {
         }
 
         for (let item of actor.items) {
-            const itemData = item.data.data;
+            const itemData = item.system;
             const uses = calculateUsesForItem(item);
 
             const hasUses = game.settings.get("action-pack", "show-no-uses") || !uses || uses.available;
@@ -318,7 +318,7 @@ async function updateTray() {
         event.preventDefault();
         const itemUuid = event.currentTarget.closest(".item").dataset.itemUuid;
         const item = fromUuid(itemUuid);
-        if ( item ) item.roll({}, event);
+        if ( item ) item.use({}, event);
         return false;
     }
 

@@ -1,7 +1,7 @@
 // From Illandril's NPC Quick Actions by Joe Spandrusyszyn
 
 export const calculateUsesForItem = (item) => {
-    const itemData = item.data.data;
+    const itemData = item.system;
     const consume = itemData.consume;
     if (consume && consume.target) {
         return calculateConsumeUses(item.actor, consume);
@@ -11,7 +11,7 @@ export const calculateUsesForItem = (item) => {
         return calculateLimitedUses(itemData);
     }
 
-    const itemType = item.data.type;
+    const itemType = item.type;
     if (itemType === 'feat') {
         return calculateFeatUses(itemData);
     } else if (itemType === 'consumable') {
@@ -30,7 +30,7 @@ function calculateConsumeUses(actor, consume) {
     let available = null;
     let maximum = null;
     if (consume.type === 'attribute') {
-        const value = getProperty(actor.data.data, consume.target);
+        const value = getProperty(actor.system, consume.target);
         if (typeof value === 'number') {
             available = value;
         } else {
@@ -39,14 +39,14 @@ function calculateConsumeUses(actor, consume) {
     } else if (consume.type === 'ammo' || consume.type === 'material') {
         const targetItem = actor.items.get(consume.target);
         if (targetItem) {
-            available = targetItem.data.data.quantity;
+            available = targetItem.system.quantity;
         } else {
             available = 0;
         }
     } else if (consume.type === 'charges') {
         const targetItem = actor.items.get(consume.target);
         if (targetItem) {
-            ({ available, maximum } = calculateLimitedUses(targetItem.data.data));
+            ({ available, maximum } = calculateLimitedUses(targetItem.system));
         } else {
             available = 0;
         }
@@ -82,8 +82,8 @@ function calculateFeatUses(itemData) {
 }
 
 function calculateSpellUses(item) {
-    const itemData = item.data.data;
-    const actorData = item.actor.data.data;
+    const itemData = item.system;
+    const actorData = item.actor.system;
     let available = null;
     let maximum = null;
     const preparationMode = itemData.preparation.mode;

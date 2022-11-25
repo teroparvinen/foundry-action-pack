@@ -1,23 +1,29 @@
 {
-    "name": "action-pack",
+    "id": "action-pack",
     "title": "Action Pack",
     "description": "Adds an expanding tray for using an actor's items, abilities and spells",
-    "system": [
-        "dnd5e"
-    ],
-    "version": "9.1",
     "authors": [
         {
-            "name": "Whistler"
+            "name": "Tero Parvinen"
         }
     ],
+    "version": "10.1",
+    "compatibility": {
+        "minimum": 10,
+        "verified": 10
+    },
+    "relationships": {
+        "systems": [{
+            "id": "dnd5e",
+            "type": "system"
+        }]
+    },
     "esmodules": [
         "module/action-pack.js"
     ],
     "styles": [
         "styles/action-pack.css"
     ],
-    "dependencies": [],
     "languages": [
         {
             "lang": "en",
@@ -25,13 +31,6 @@
             "path": "lang/en.json"
         }
     ],
-    "minimumCoreVersion": "9",
-    "compatibleCoreVersion": "9",
-    "compatibility": {
-        "minimum": 9,
-        "verified": 9,
-        "maximum": 9
-    },
     "url": "https://github.com/teroparvinen/foundry-action-pack",
     "bugs": "https://github.com/teroparvinen/foundry-action-pack/issues",
     "manifest": "https://github.com/teroparvinen/foundry-action-pack/releases/latest/download/module.json",

@@ -10,36 +10,36 @@
                             </div>
                             <h4>
                                 {{item.name}}
-                                {{#if (and uses (or (not (eq item.type "spell")) (eq item.data.data.preparation.mode "innate")))}}
+                                {{#if (and uses (or (not (eq item.type "spell")) (eq item.system.preparation.mode "innate")))}}
                                     ({{uses.available}}{{#if uses.maximum}}/{{uses.maximum}}{{/if}})
                                 {{/if}}
                             </h4>
 
-                            {{#if item.data.data.components.ritual}}
+                            {{#if item.system.components.ritual}}
                                 <div class="ritual flag" title="{{localize "action-pack.flag.ritual-title"}}">{{localize "action-pack.flag.ritual"}}</div>
                             {{/if}}
-                            {{#if item.data.data.components.concentration}}
+                            {{#if item.system.components.concentration}}
                                 <div class="concentration flag" title="{{localize "action-pack.flag.concentration-title"}}">{{localize "action-pack.flag.concentration"}}</div>
                             {{/if}}
 
-                            {{#if (eq item.data.data.activation.type "bonus")}}
+                            {{#if (eq item.system.activation.type "bonus")}}
                                 <div class="bonus flag" title="{{localize "action-pack.flag.bonus-title"}}">{{localize "action-pack.flag.bonus"}}</div>
                             {{/if}}
-                            {{#if (eq item.data.data.activation.type "reaction")}}
+                            {{#if (eq item.system.activation.type "reaction")}}
                                 <div class="reaction flag" title="{{localize "action-pack.flag.reaction-title"}}">{{localize "action-pack.flag.reaction"}}</div>
                             {{/if}}
-                            {{#if (eq item.data.data.activation.type "legendary")}}
+                            {{#if (eq item.system.activation.type "legendary")}}
                                 <div class="legendary flag" title="{{localize "action-pack.flag.legendary-title"}}">{{localize "action-pack.flag.legendary"}}</div>
                             {{/if}}
 
-                            {{#if (and item.data.data.recharge.value item.data.data.recharge.charged)}}
+                            {{#if (and item.system.recharge.value item.system.recharge.charged)}}
                                <div class="flag"><i class="fas fa-bolt"></i></div>
                             {{/if}}
-                            {{#if (and item.data.data.recharge.value (not item.data.data.recharge.charged))}}
-                               <div class="flag"><a class="rollable item-recharge"><i class="fas fa-dice-six"></i> {{item.data.data.recharge.value}}+</a></div>
+                            {{#if (and item.system.recharge.value (not item.system.recharge.charged))}}
+                               <div class="flag"><a class="rollable item-recharge"><i class="fas fa-dice-six"></i> {{item.system.recharge.value}}+</a></div>
                             {{/if}}
 
-                            {{#if (and (eq item.data.data.preparation.mode "prepared") (not item.data.data.preparation.prepared))}}
+                            {{#if (and (eq item.system.preparation.mode "prepared") (not item.system.preparation.prepared))}}
                                 <div class="unprepared flag" title="{{localize "action-pack.flag.unprepared-title"}}">{{localize "action-pack.flag.unprepared"}}</div>
                             {{/if}}
                         </div>
