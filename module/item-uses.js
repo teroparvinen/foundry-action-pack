@@ -75,9 +75,9 @@ function calculateLimitedUses(itemData) {
 }
 
 function calculateFeatUses(itemData) {
-    if (itemData.recharge && itemData.recharge.value) {
-        return { available: itemData.recharge.charged ? 1 : 0, maximum: 1 };
-    }
+    // if (itemData.recharge && itemData.recharge.value) {
+    //     return { available: itemData.recharge.charged ? 1 : 0, maximum: 1 };
+    // }
     return null;
 }
 

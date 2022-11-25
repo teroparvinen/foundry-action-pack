@@ -156,6 +156,10 @@
     font-weight: bold;
 }
 
+.action-pack__item .item-recharge {
+    white-space: nowrap;
+}
+
 .action-pack__item .bonus, .action-pack__item .reaction {
     background: rgba(255, 255, 255, 0.8);
     color: black;

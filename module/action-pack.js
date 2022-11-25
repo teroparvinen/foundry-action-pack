@@ -373,12 +373,28 @@ async function updateTray() {
         li.toggleClass("expanded");
     });
 
+    html.find('.rollable.item-recharge').mousedown(function(event) {
+        const li = $(event.currentTarget).parents(".item");
+        const item = fromUuid(li.data("item-uuid"));
+        item.rollRecharge();
+        event.preventDefault();
+        return false;
+    });
+
     html.find('.action-pack__ability').click(function(event) {
         const abl = this.dataset.ability;
         const actorUuid = this.closest('.action-pack__actor').dataset.actorUuid;
         const actor = fudgeToActor(fromUuid(actorUuid));
         if (abl && actor) {
             actor.rollAbility(abl, {event: event});
+        }
+    });
+
+    html.find('.action-pack__actor-name').click(function(event) {
+        const actorUuid = this.closest('.action-pack__actor').dataset.actorUuid;
+        const actor = fudgeToActor(fromUuid(actorUuid));
+        if (actor) {
+            actor.sheet.render(true);
         }
     });
 
