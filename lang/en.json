@@ -34,6 +34,7 @@
             "consumable": "Consumable",
             "other": "Other",
             "innate": "Innate Ability",
+            "pact": "Pact Magic",
             "spell0": "Cantrip",
             "spell1": "Level 1",
             "spell2": "Level 2",

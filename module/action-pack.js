@@ -215,6 +215,7 @@ async function updateTray() {
                 title: "action-pack.category.spell",
                 groups: {
                     innate: { items: [], title: "action-pack.category.innate" },
+                    pact: { items: [], title: "action-pack.category.pact" },
                     ...[...Array(10).keys()].reduce((prev, cur) => {
                         prev[`spell${cur}`] = { items: [], title: `action-pack.category.spell${cur}` }
                         return prev;
@@ -244,6 +245,9 @@ async function updateTray() {
                         break;
                     case "innate":
                         sections.spell.groups.innate.items.push({ item, uses });
+                        break;
+                    case "pact":
+                        sections.spell.groups.pact.items.push({ item, uses });
                         break;
                     }
     
@@ -295,6 +299,13 @@ async function updateTray() {
                 if (group) {
                     const sl = actorData.spells[`spell${l}`];
                     group.uses = { available: sl.value, maximum: sl.max };
+                }
+            }
+
+            if (actorData.spells.pact.max) {
+                sections.spell.groups.pact.uses = {
+                    available: actorData.spells.pact.value,
+                    maximum: actorData.spells.pact.max
                 }
             }
 
