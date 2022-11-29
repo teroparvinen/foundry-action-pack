@@ -87,7 +87,7 @@ Hooks.on("updateItem", (item) => {
 });
 
 Hooks.on("updateCombat", (combat) => {
-    currentlyActiveActor = combat.turns.find(c => c.id == combat.current.combatantId).actor
+    currentlyActiveActor = combat.turns.find(c => c.id == combat.current.combatantId)?.actor
     updateCombatStatus();
     lastKnownActiveActor = currentlyActiveActor;
 });
