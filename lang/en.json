@@ -44,7 +44,8 @@
             "spell6": "Level 6",
             "spell7": "Level 7",
             "spell8": "Level 8",
-            "spell9": "Level 9"
+            "spell9": "Level 9",
+            "passive": "Passive"
         },
         "keybindings": {
             "toggle-tray": "Toggle tray open or closed"

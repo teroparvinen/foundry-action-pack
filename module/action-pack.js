@@ -61,9 +61,19 @@ function isTrayAutoHide() {
     return config === "selected" || (config === "auto" && game.user.isGM);
 }
 
+function getActiveActors() {
+    if (canvas.tokens.controlled.length) {
+        return canvas.tokens.controlled.map(token => token.actor);
+    }
+    if (game.user.character) {
+        return [game.user.character];
+    }
+    return [];
+}
+
 Hooks.on("controlToken", async () => {
     if (isTrayAutoHide()) {
-        if (canvas.tokens.controlled.length) {
+        if (getActiveActors().length) {
             $('#action-pack').addClass("is-open");
         } else {
             $('#action-pack').removeClass("is-open");
@@ -75,13 +85,13 @@ Hooks.on("controlToken", async () => {
 });
 
 Hooks.on("updateActor", (actor) => {
-    if (canvas.tokens.controlled.map(t => t.actor).includes(actor)) {
+    if (getActiveActors().includes(actor)) {
         updateTray();
     }
 });
 
 Hooks.on("updateItem", (item) => {
-    if (canvas.tokens.controlled.map(t => t.actor).includes(item.actor)) {
+    if (getActiveActors().includes(item.actor)) {
         updateTray();
     }
 });
@@ -193,8 +203,7 @@ Hooks.on('getSceneControlButtons', (controls) => {
 });
 
 async function updateTray() {
-    const actors = canvas.tokens.controlled.map(token => {
-        const actor = token.actor;
+    const actors = getActiveActors().map(actor => {
         const actorData = actor.system;
 
         const canCastUnpreparedRituals = !!actor.items.find(i => i.name === "Wizard");
@@ -221,7 +230,8 @@ async function updateTray() {
                         return prev;
                     }, {})
                 }
-            }
+            },
+            passive: { items: [], title: "action-pack.category.passive" }
         }
 
         for (let item of actor.items) {
@@ -274,6 +284,8 @@ async function updateTray() {
                     }
                     break;
                 }
+            } else if (actor.type === "npc") {
+                sections.passive.items.push({ item, uses });
             }
         }
 
