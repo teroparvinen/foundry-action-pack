@@ -90,10 +90,22 @@ Hooks.on("updateActor", (actor) => {
     }
 });
 
-Hooks.on("updateItem", (item) => {
+function checkItemUpdate(item) {
     if (getActiveActors().includes(item.actor)) {
         updateTray();
     }
+}
+
+Hooks.on("updateItem", (item) => {
+    checkItemUpdate(item);
+});
+
+Hooks.on("deleteItem", (item) => {
+    checkItemUpdate(item);
+});
+
+Hooks.on("createItem", (item) => {
+    checkItemUpdate(item);
 });
 
 Hooks.on("updateCombat", (combat) => {
