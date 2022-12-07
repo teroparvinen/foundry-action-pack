@@ -429,7 +429,8 @@ async function updateTray() {
         const actorUuid = this.closest('.action-pack__actor').dataset.actorUuid;
         const actor = fudgeToActor(fromUuid(actorUuid));
         if (actor) {
-            actor.sheet.render(true);
+            if (!actor.sheet.rendered) actor.sheet.render(true);
+            else actor.sheet.close();
         }
     });
 
