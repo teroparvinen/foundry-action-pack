@@ -48,7 +48,7 @@ Hooks.on("ready", () => {
         <div id="action-pack">
         </div>
     `;
-    $('body').prepend(trayHtml);
+    $('#interface').prepend(trayHtml);
 
     lastKnownActiveActor = game.combat?.turns.find(c => c.id == game.combat?.current.combatantId)?.actor;
     currentlyActiveActor = lastKnownActiveActor;
@@ -185,6 +185,19 @@ Hooks.on("init", () => {
         }
     );
   
+    game.settings.register(
+        "action-pack",
+        "show-unprepared-cantrips",
+        {
+            name: "action-pack.settings.show-unprepared-cantrips",
+            scope: "client",
+            config: true,
+            default: false,
+            type: Boolean,
+            onChange: () => updateTray()
+        }
+    );
+  
     game.keybindings.register("action-pack", "toggle-tray", {
         name: "action-pack.keybindings.toggle-tray",
         editable: [
@@ -215,6 +228,9 @@ Hooks.on('getSceneControlButtons', (controls) => {
 });
 
 async function updateTray() {
+    const settingShowNoUses = game.settings.get("action-pack", "show-no-uses");
+    const settingShowUnpreparedCantrips = game.settings.get("action-pack", "show-unprepared-cantrips");
+
     const actors = getActiveActors().map(actor => {
         const actorData = actor.system;
 
@@ -250,7 +266,7 @@ async function updateTray() {
             const itemData = item.system;
             const uses = calculateUsesForItem(item);
 
-            const hasUses = game.settings.get("action-pack", "show-no-uses") || !uses || uses.available;
+            const hasUses = settingShowNoUses || !uses || uses.available;
 
             if (hasUses && itemData.activation?.type && itemData.activation.type !== "none") {
                 switch (item.type) {
@@ -261,7 +277,12 @@ async function updateTray() {
                     switch (itemData.preparation?.mode) {
                     case "prepared":
                     case "always":
-                        if (itemData.preparation?.mode !== "prepared" || itemData.preparation?.prepared || (canCastUnpreparedRituals && itemData.components?.ritual)) {
+                    case "atwill":
+                        const isAlways = itemData.preparation?.mode !== "prepared";
+                        const isPrepared = itemData.preparation?.prepared;
+                        const isCastableRitual = (canCastUnpreparedRituals && itemData.components?.ritual);
+                        const isDisplayableCantrip = itemData.level == 0 && settingShowUnpreparedCantrips;
+                        if (isAlways || isPrepared || isCastableRitual || isDisplayableCantrip) {
                             sections.spell.groups[`spell${itemData.level}`].items.push({ item, uses });
                         }
                         break;

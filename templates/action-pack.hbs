@@ -39,7 +39,7 @@
                                <div class="flag"><a class="rollable item-recharge"><i class="fas fa-dice-six"></i> {{item.system.recharge.value}}+</a></div>
                             {{/if}}
 
-                            {{#if (and (eq item.system.preparation.mode "prepared") (not item.system.preparation.prepared))}}
+                            {{#if (and (eq item.system.preparation.mode "prepared") (not item.system.preparation.prepared) (ne item.system.level 0))}}
                                 <div class="unprepared flag" title="{{localize "action-pack.flag.unprepared-title"}}">{{localize "action-pack.flag.unprepared"}}</div>
                             {{/if}}
                         </div>
