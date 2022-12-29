@@ -60,9 +60,14 @@
             "icon-size-small": "Small",
             "icon-size-medium": "Medium",
             "icon-size-large": "Large",
+            "tray-size": "Tray size",
+            "tray-size-small": "Small",
+            "tray-size-medium": "Medium",
+            "tray-size-large": "Large",
             "use-control-button": "Include a toggle button in token controls",
             "show-no-uses": "Show items with no uses left",
-            "show-unprepared-cantrips": "Show cantrips even if they are not prepared"
+            "show-unprepared-cantrips": "Show cantrips even if they are not prepared",
+            "show-spell-dots": "Show spell slot dots"
         }
     }    
 }

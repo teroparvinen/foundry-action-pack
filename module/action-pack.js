@@ -161,6 +161,24 @@ Hooks.on("init", () => {
   
     game.settings.register(
         "action-pack",
+        "tray-size",
+        {
+            name: "action-pack.settings.tray-size",
+            scope: "client",
+            config: true,
+            default: "large",
+            choices: {
+                small: "action-pack.settings.tray-size-small",
+                medium: "action-pack.settings.tray-size-medium",
+                large: "action-pack.settings.tray-size-large"
+            },
+            type: String,
+            onChange: () => updateTray()
+        }
+    );
+  
+    game.settings.register(
+        "action-pack",
         "use-control-button",
         {
             name: "action-pack.settings.use-control-button",
@@ -169,6 +187,19 @@ Hooks.on("init", () => {
             default: true,
             type: Boolean,
             onChange: () => window.location.reload()
+        }
+    );
+  
+    game.settings.register(
+        "action-pack",
+        "show-spell-dots",
+        {
+            name: "action-pack.settings.show-spell-dots",
+            scope: "client",
+            config: true,
+            default: true,
+            type: Boolean,
+            onChange: () => updateTray()
         }
     );
   
@@ -364,11 +395,19 @@ async function updateTray() {
         };
     });
 
-    const iconSize = game.settings.get("action-pack", "icon-size");
+    function prefix(tgt, str) {
+        return tgt ? [str, tgt].join("-") : tgt;
+    }
+
+    const iconSize = prefix(game.settings.get("action-pack", "icon-size"), "icon");
+    const traySize = prefix(game.settings.get("action-pack", "tray-size"), "tray");
+    const showSpellDots = game.settings.get("action-pack", "show-spell-dots");
     const abilities = CONFIG.DND5E.abilities;
-    const htmlString = await renderTemplate("modules/action-pack/templates/action-pack.hbs", { actors, iconSize, abilities });
+    const htmlString = await renderTemplate("modules/action-pack/templates/action-pack.hbs", { actors, iconSize, abilities, showSpellDots });
     const container = $('#action-pack');
     const html = container.html(htmlString);
+    container[0].classList.remove("tray-small", "tray-medium", "tray-large");
+    container[0].classList.add(traySize);
 
     function roll(event) {
         event.preventDefault();
@@ -437,6 +476,20 @@ async function updateTray() {
         return false;
     });
 
+    html.find('.group-dots .dot').click(function(event) {
+        const actorUuid = this.closest('.action-pack__actor').dataset.actorUuid;
+        const actor = fudgeToActor(fromUuid(actorUuid));
+        const group = this.closest('.group-dots').dataset.groupName;
+        const slot = parseInt(this.dataset.slot) + 1;
+
+        const current = actor.system.spells?.[group]?.value;
+        if (current !== undefined) {
+            const key = `system.spells.${group}.value`;
+            const newValue = current !== slot ? slot : slot - 1;
+            actor.update({ [key]: newValue });
+        }
+    });
+
     html.find('.action-pack__ability').click(function(event) {
         const abl = this.dataset.ability;
         const actorUuid = this.closest('.action-pack__actor').dataset.actorUuid;
@@ -458,6 +511,14 @@ async function updateTray() {
     html.find('.action-pack__end-turn').click(function(event) {
         game.combat?.nextTurn();
     });
-
-    
 }
+
+Handlebars.registerHelper({
+    actionPackSlots: (available, maximum) => {
+        const slots = [];
+        for (let i = 0; i < maximum; i++) {
+            slots.push(i < available);
+        }
+        return slots;
+    }
+});

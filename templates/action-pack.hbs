@@ -1,5 +1,5 @@
-<div class="action-pack__container">
-    <div class="action-pack__actors {{iconSize}}">
+<div class="action-pack__container {{iconSize}}">
+    <div class="action-pack__actors">
         {{#*inline "item-list"}}
             <ul class="action-pack__items">
                 {{#each this}}
@@ -50,8 +50,8 @@
 
         {{#*inline "item-category"}}
             <h2>{{localize title}}</h2>
-            {{#each groups as |group grounName|}}
-                {{> item-group }}
+            {{#each groups as |group groupName|}}
+                {{> item-group groupName=groupName showSpellDots=../showSpellDots }}
             {{/each}}
             {{#with items}}
                 {{> item-list }}
@@ -61,7 +61,16 @@
         {{#*inline "item-group"}}
             {{#if items.length}}
                 <div class="flexrow">
-                    <h3>{{localize title}}</h3>
+                    <h3>
+                        <span>{{localize title}}</span>
+                        {{#if (and uses showSpellDots)}}
+                            <div class="group-dots" data-group-name="{{groupName}}">
+                                {{#each (actionPackSlots uses.available uses.maximum) as |available slotNumber|}}
+                                    <div class="dot {{#unless available}}empty{{/unless}}" data-slot="{{slotNumber}}"></div>
+                                {{/each}}
+                            </div>
+                        {{/if}}
+                    </h3>
                     {{#if uses}}
                         <div class="group-uses">{{uses.available}}/{{uses.maximum}}</div>
                     {{/if}}
@@ -91,7 +100,7 @@
                         {{> item-category}}
                     {{/with}}
                     {{#with spell}}
-                        {{> item-category}}
+                        {{> item-category showSpellDots=../../../showSpellDots}}
                     {{/with}}
                     {{#with inventory}}
                         {{> item-category}}

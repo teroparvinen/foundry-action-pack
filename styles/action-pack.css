@@ -2,10 +2,19 @@
     position: relative;
     width: 0;
     transition: width .5s;
+    --action-pack-width: 300px;
+}
+
+#action-pack.tray-medium {
+    --action-pack-width: 240px;
+}
+
+#action-pack.tray-small {
+    --action-pack-width: 200px;
 }
 
 #action-pack.is-open {
-    width: 300px;
+    width: var(--action-pack-width);
 }
 
 .action-pack__container {
@@ -13,13 +22,49 @@
     right: 0;
     top: 0;
     bottom: 0;
-    width: 300px;
+    width: var(--action-pack-width);
     background: rgba(0, 0, 0, 0.7);
     color: white;
     z-index: 1;
     padding: 10px;
     overflow: auto;
     transition: bottom 0.3s;
+    --action-pack-icon: 36px;
+    --die-icon-size: 24px;
+}
+
+.action-pack__container.icon-small {
+    --action-pack-icon: 30px;
+    --die-icon-size: 20px;
+}
+
+.action-pack__container.icon-large {
+    --action-pack-icon: 42px;
+    --die-icon-size: 28px;
+}
+
+#action-pack.tray-small .action-pack__container {
+    --action-pack-icon: 30px;
+}
+
+#action-pack.tray-small .action-pack__container.icon-small {
+    --action-pack-icon: 24px;
+}
+
+#action-pack.tray-small .action-pack__container.icon-large {
+    --action-pack-icon: 36px;
+}
+
+#action-pack.tray-medium .action-pack__container {
+    --action-pack-icon: 30px;
+}
+
+#action-pack.tray-medium .action-pack__container.icon-small {
+    --action-pack-icon: 26px;
+}
+
+#action-pack.tray-medium .action-pack__container.icon-large {
+    --action-pack-icon: 36px;
 }
 
 .is-current-combatant .action-pack__container {
@@ -49,6 +94,9 @@
     font-weight: bold;
     color: rgba(255, 255, 255, 0.7);
     border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .action-pack__actor + .action-pack__actor {
@@ -67,9 +115,16 @@
     flex: 1;
     padding: 3px 5px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-    /* border-radius: 5px; */
     text-transform: capitalize;
     text-align: center;
+}
+
+.tray-small .action-pack__abilities {
+    gap: 3px;
+}
+
+.tray-small .action-pack__ability {
+    padding: 3px 3px;
 }
 
 .action-pack__actor .group-uses {
@@ -79,6 +134,23 @@
     color: black;
     padding: 3px 6px;
     border-radius: 5px;
+}
+
+.action-pack__actor .group-dots {
+    display: flex;
+    gap: 2px;
+}
+
+.action-pack__actor .group-dots .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    cursor: pointer;
+    background-color: rgba(255,100,0,1);
+}
+
+.action-pack__actor .group-dots .dot.empty {
+    background-color: rgba(255, 255, 255, 0.2);
 }
 
 .action-pack__items {
@@ -100,8 +172,8 @@
 }
 
 .action-pack__item .item-name .item-image {
-    flex: 0 0 36px;
-    height: 36px;
+    flex: 0 0 var(--action-pack-icon);
+    height: var(--action-pack-icon);
     margin-right: 5px;
     background-repeat: no-repeat;
     background-size: cover;
@@ -109,16 +181,7 @@
     align-items: center;
     justify-content: center;
     border-radius: 5px;
-}
-
-.small .action-pack__item .item-name .item-image {
-    flex: 0 0 30px;
-    height: 30px;
-}
-
-.large .action-pack__item .item-name .item-image {
-    flex: 0 0 42px;
-    height: 42px;
+    cursor: pointer;
 }
 
 .action-pack__item .item-name:hover .item-image {
@@ -127,16 +190,8 @@
 
 .action-pack__item .item-name .item-image i {
     display: none;
-    font-size: 24px;
+    font-size: var(--die-icon-size);
     opacity: 0.5;
-}
-
-.small .action-pack__item .item-name .item-image i {
-    font-size: 20px;
-}
-
-.large .action-pack__item .item-name .item-image i {
-    font-size: 28px;
 }
 
 .action-pack__item .item-name:hover .item-image i {
@@ -154,6 +209,13 @@
     line-height: 21px;
     text-align: center;
     font-weight: bold;
+}
+
+.tray-small .action-pack__item .flag {
+    flex: 0 0 16px;
+    height: 16px;
+    font-size: 85%;
+    line-height: 16px;
 }
 
 .action-pack__item .item-recharge {
