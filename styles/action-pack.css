@@ -277,7 +277,7 @@
     bottom: 0;
     right: 0;
     height: 0px;
-    width: 300px;
+    width: var(--action-pack-width);
     z-index: 2;
     background: rgba(0, 0, 0, 0.9);
     color: white;
@@ -290,4 +290,116 @@
 
 .is-current-combatant .action-pack__end-turn {
     height: 50px;
+}
+
+.action-pack__initiative {
+    align-items: center;
+    padding: 5px 9px;
+    gap: 7px;
+    background-color: rgba(255, 255, 255, 0.7);
+    margin: 12px 0;
+    border: 1px solid black;
+    border-radius: 3px;
+    color: black;
+    font-size: 14px;
+    box-shadow: 0 0 0 1.7px white;
+}
+
+@keyframes init-jiggle {
+    0% {
+        transform: rotate(0);
+    }
+    3% {
+        transform: rotate(10deg);
+    }
+    9% {
+        transform: rotate(-10deg);
+    }
+    15% {
+        transform: rotate(10deg);
+    }
+    21% {
+        transform: rotate(-10deg);
+    }
+    25% {
+        transform: rotate(0);
+    }
+}
+
+.action-pack__initiative-icon {
+    animation: infinite forwards 1.8s init-jiggle;
+}
+
+.action-pack__skill-container.is-open .action-pack__skills, .action-pack__skill-container.append .action-pack__skills {
+    display: initial;
+    /* max-height: 450px; */
+}
+
+.action-pack__skill-container.append {
+    margin-top: 15px;
+}
+
+.action-pack__skill-header {
+    display: block;
+    padding: 1px 6px;
+    margin: 6px -5px 0px -5px;
+    font-family: "Modesto Condensed", "Palatino Linotype", serif;
+    font-size: 18px;
+}
+
+.action-pack__skills {
+    margin: 0 -3px 5px 0;
+    display: none;
+    /* max-height: 0;
+    transition: max-height 0.5s;
+    overflow: hidden; */
+}
+
+.action-pack__skill-container.append .action-pack__skill-header i {
+    display: none;
+}
+
+.action-pack__skill-container .action-pack__skill-header i {
+    transition: transform 0.5s;
+    float: right;
+}
+
+.action-pack__skill-container.is-open .action-pack__skill-header i {
+    transform: rotate(-180deg);
+}
+
+.action-pack__skill-row {
+    padding: 3px 5px;
+    gap: 5px;
+    align-items: baseline;
+}
+
+.action-pack__skill-row i {
+    font-size: 10px;
+}
+
+.action-pack__skill-row span {
+    font-size: 13px;
+}
+
+.action-pack__skill-row.proficient span {
+    font-weight: bold;
+}
+
+.action-pack__skill-row:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.action-pack__skill-label {
+    flex: 5;
+}
+
+.action-pack__skill-bonus {
+    text-align: center;
+}
+
+.action-pack__skill-passive {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 12px;
 }

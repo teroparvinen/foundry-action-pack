@@ -3,6 +3,8 @@ import { calculateUsesForItem } from "./item-uses.js";
 let lastKnownActiveActor;
 let currentlyActiveActor;
 
+let scrollPosition = {};
+
 function fromUuid(uuid) {
     if (!uuid || uuid === '') return null;
     let parts = uuid.split('.');
@@ -62,8 +64,9 @@ function isTrayAutoHide() {
 }
 
 function getActiveActors() {
-    if (canvas.tokens.controlled.length) {
-        return canvas.tokens.controlled.map(token => token.actor);
+    const controlled = canvas.tokens.controlled.filter(t => ["character", "npc"].includes(t.actor?.type))
+    if (controlled.length) {
+        return controlled.map(token => token.actor);
     }
     if (game.user.character) {
         return [game.user.character];
@@ -112,6 +115,18 @@ Hooks.on("updateCombat", (combat) => {
     currentlyActiveActor = combat.turns.find(c => c.id == combat.current.combatantId)?.actor
     updateCombatStatus();
     lastKnownActiveActor = currentlyActiveActor;
+});
+
+Hooks.on("createCombatant", (combatant) => {
+    if (getActiveActors().includes(combatant.actor)) {
+        updateTray();
+    }
+});
+
+Hooks.on("updateCombatant", (combatant, changes) => {
+    if (getActiveActors().includes(combatant.actor)) {
+        updateTray();
+    }
 });
 
 Hooks.on("deleteCombat", (combat) => {
@@ -179,14 +194,19 @@ Hooks.on("init", () => {
   
     game.settings.register(
         "action-pack",
-        "use-control-button",
+        "skill-mode",
         {
-            name: "action-pack.settings.use-control-button",
+            name: "action-pack.settings.skill-mode",
+            hint: "action-pack.settings.skill-mode-hint",
             scope: "client",
             config: true,
-            default: true,
-            type: Boolean,
-            onChange: () => window.location.reload()
+            default: "dropdown",
+            choices: {
+                dropdown: "action-pack.settings.skill-mode-dropdown",
+                append: "action-pack.settings.skill-mode-append"
+            },
+            type: String,
+            onChange: () => updateTray()
         }
     );
   
@@ -218,6 +238,19 @@ Hooks.on("init", () => {
   
     game.settings.register(
         "action-pack",
+        "sort-alphabetic",
+        {
+            name: "action-pack.settings.sort-alphabetic",
+            scope: "client",
+            config: true,
+            default: false,
+            type: Boolean,
+            onChange: () => updateTray()
+        }
+    );
+  
+    game.settings.register(
+        "action-pack",
         "show-unprepared-cantrips",
         {
             name: "action-pack.settings.show-unprepared-cantrips",
@@ -229,6 +262,19 @@ Hooks.on("init", () => {
         }
     );
   
+    game.settings.register(
+        "action-pack",
+        "use-control-button",
+        {
+            name: "action-pack.settings.use-control-button",
+            scope: "client",
+            config: true,
+            default: true,
+            type: Boolean,
+            onChange: () => window.location.reload()
+        }
+    );
+  
     game.keybindings.register("action-pack", "toggle-tray", {
         name: "action-pack.keybindings.toggle-tray",
         editable: [
@@ -236,6 +282,38 @@ Hooks.on("init", () => {
         ],
         onDown: (ctx) => {
             $('#action-pack').toggleClass("is-open");
+            $('#action-pack .action-pack__skill-container').removeClass("is-open");
+        }
+    });
+    game.keybindings.register("action-pack", "toggle-skills", {
+        name: "action-pack.keybindings.toggle-skills",
+        hint: "action-pack.keybindings.toggle-skills-hint",
+        editable: [
+            { key: "KeyK", modifiers: []}
+        ],
+        onDown: (ctx) => {
+            if (game.settings.get("action-pack", "skill-mode") === "dropdown") {
+                const wasSkillsOpen = $('#action-pack .action-pack__skill-container').hasClass("is-open");
+                if ($('#action-pack').hasClass("is-open")) {
+                    $('#action-pack .action-pack__skill-container').toggleClass("is-open");
+                } else {
+                    $('#action-pack').toggleClass("is-open");
+                    $('#action-pack .action-pack__skill-container').addClass("is-open");
+                }
+    
+                if (!wasSkillsOpen) {
+                    scrollPosition = {};
+                    const container = $('.action-pack__container');
+                    if (container.length) {
+                        container[0].scrollTop = 0;
+                    }
+                }
+            } else {
+                if (!$('#action-pack').hasClass("is-open")) {
+                    $('#action-pack').toggleClass("is-open");
+                }
+                $('.action-pack__container')[0].scrollTop = $('#action-pack .action-pack__skill-container').offset().top;
+            }
         }
     });
 });
@@ -251,6 +329,7 @@ Hooks.on('getSceneControlButtons', (controls) => {
                 visible: true,
                 onClick: () => {
                     $('#action-pack').toggleClass("is-open");
+                    $('#action-pack .action-pack__skill-container').removeClass("is-open");
                 },
                 button: true
             });
@@ -261,6 +340,8 @@ Hooks.on('getSceneControlButtons', (controls) => {
 async function updateTray() {
     const settingShowNoUses = game.settings.get("action-pack", "show-no-uses");
     const settingShowUnpreparedCantrips = game.settings.get("action-pack", "show-unprepared-cantrips");
+    const settingSkillMode = game.settings.get("action-pack", "skill-mode");
+    const settingSortAlphabetically = game.settings.get("action-pack", "sort-alphabetic");
 
     const actors = getActiveActors().map(actor => {
         const actorData = actor.system;
@@ -283,6 +364,7 @@ async function updateTray() {
                 title: "action-pack.category.spell",
                 groups: {
                     innate: { items: [], title: "action-pack.category.innate" },
+                    atwill: { items: [], title: "action-pack.category.atwill" },
                     pact: { items: [], title: "action-pack.category.pact" },
                     ...[...Array(10).keys()].reduce((prev, cur) => {
                         prev[`spell${cur}`] = { items: [], title: `action-pack.category.spell${cur}` }
@@ -308,7 +390,6 @@ async function updateTray() {
                     switch (itemData.preparation?.mode) {
                     case "prepared":
                     case "always":
-                    case "atwill":
                         const isAlways = itemData.preparation?.mode !== "prepared";
                         const isPrepared = itemData.preparation?.prepared;
                         const isCastableRitual = (canCastUnpreparedRituals && itemData.components?.ritual);
@@ -316,6 +397,9 @@ async function updateTray() {
                         if (isAlways || isPrepared || isCastableRitual || isDisplayableCantrip) {
                             sections.spell.groups[`spell${itemData.level}`].items.push({ item, uses });
                         }
+                        break;
+                    case "atwill":
+                        sections.spell.groups.atwill.items.push({ item, uses });
                         break;
                     case "innate":
                         sections.spell.groups.innate.items.push({ item, uses });
@@ -388,10 +472,40 @@ async function updateTray() {
             return sections;
         }
 
+        function sortItems(sections) {
+            Object.entries(sections).forEach(([key, value]) => {
+                if (key === "items") {
+                    value.sort((a, b) => {
+                        if (settingSortAlphabetically) {
+                            return a.item.name.localeCompare(b.item.name);
+                        } else {
+                            return a.item.sort - b.item.sort;
+                        }
+                    });
+                } else if (typeof value === "object") {
+                    sortItems(value);
+                }
+            });
+            return sections;
+        }
+
+        const combatant = game.combat?.combatants.find(c => c.actor === actor);
+        const needsInitiative = combatant && !combatant.initiative;
+
+        let doShowSkills = false;
+        const { uuid, showSkills } = scrollPosition;
+        if (actor.uuid === uuid && showSkills) {
+            doShowSkills = true;
+        }
+    
         return {
             actor: actor,
             name: actor.name,
-            sections: addSpellLevelUses(removeEmptySections(sections))
+            sections: addSpellLevelUses(sortItems(removeEmptySections(sections))),
+            needsInitiative,
+            skills: CONFIG.DND5E.skills,
+            skillMode: settingSkillMode,
+            showSkills: doShowSkills
         };
     });
 
@@ -408,6 +522,16 @@ async function updateTray() {
     const html = container.html(htmlString);
     container[0].classList.remove("tray-small", "tray-medium", "tray-large");
     container[0].classList.add(traySize);
+
+    if (actors.length == 1) {
+        const currentUuid = actors[0].actor.uuid;
+        const { uuid, scroll } = scrollPosition;
+        if (currentUuid === uuid && scroll !== undefined) {
+            html.find('.action-pack__container')[0].scrollTop = scroll;
+        }
+    } else {
+        scrollPosition = {};
+    }
 
     function roll(event) {
         event.preventDefault();
@@ -433,7 +557,6 @@ async function updateTray() {
 
     html.find('.rollable .item-image').mousedown(roll);
     html.find('.rollable.item-name')
-        // .on("contextmenu", roll)
         .hover(
             event => hover(event, "actorItemHoverIn"),
             event => hover(event, "actorItemHoverOut")
@@ -499,6 +622,23 @@ async function updateTray() {
         }
     });
 
+    html.find('.action-pack__skill-row').click(function(event) {
+        const skill = event.currentTarget.dataset.skill;
+        const actorUuid = this.closest('.action-pack__actor').dataset.actorUuid;
+        const actor = fudgeToActor(fromUuid(actorUuid));
+        return actor.rollSkill(skill, { event: event });
+    });
+    html.find('.action-pack__skill-row').on("contextmenu", function(event) {
+        const skill = event.currentTarget.dataset.skill;
+        const actorUuid = this.closest('.action-pack__actor').dataset.actorUuid;
+        const actor = fudgeToActor(fromUuid(actorUuid));
+        return actor.rollSkill(skill, { event: event, fastForward: true });
+    });
+
+    html.find('.action-pack__skill-header').click(function(event) {
+        event.target.closest('.action-pack__skill-container').classList.toggle("is-open");
+    });
+
     html.find('.action-pack__actor-name').click(function(event) {
         const actorUuid = this.closest('.action-pack__actor').dataset.actorUuid;
         const actor = fudgeToActor(fromUuid(actorUuid));
@@ -510,6 +650,24 @@ async function updateTray() {
 
     html.find('.action-pack__end-turn').click(function(event) {
         game.combat?.nextTurn();
+    });
+
+    html.find('.action-pack__initiative').click(function(event) {
+        const actorUuid = this.closest('.action-pack__actor').dataset.actorUuid;
+        const actor = fudgeToActor(fromUuid(actorUuid));
+        const combatantId = game.combat?.combatants.find(c => c.actor === actor).id;
+        game.combat?.rollInitiative([combatantId]);
+    });
+
+    html.find('.action-pack__container').on("scroll", function(event) {
+        if (getActiveActors().length == 1) {
+            const uuid = getActiveActors()[0].uuid;
+            const scroll = event.currentTarget.scrollTop;
+            const showSkills = $('.action-pack__skill-container').hasClass("is-open");
+            scrollPosition = { uuid, scroll , showSkills };
+        } else {
+            scrollPosition = {};
+        }
     });
 }
 

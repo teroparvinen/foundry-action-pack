@@ -82,15 +82,58 @@
             {{/if}}
         {{/inline}}
 
+        {{#*inline "skill-container"}}
+            <div class="action-pack__skill-container {{skillMode}} {{#if showSkills}}is-open{{/if}}">
+                <a class="action-pack__skill-header">
+                    Skills
+                    <i class="fas fa-caret-up"></i>
+                </a>
+                <div class="action-pack__skills">
+                    {{#each actor.system.skills as |skill s|}}
+                        <a class="action-pack__skill-row flexrow {{#if (gte skill.proficient 1)}}proficient{{/if}}" data-skill="{{s}}">
+                            <div class="flex0">
+                                {{#if (eq skill.proficient 0)}}<i class="far fa-circle"></i>{{/if}}
+                                {{#if (eq skill.proficient 0.5)}}<i class="fas fa-adjust"></i>{{/if}}
+                                {{#if (eq skill.proficient 1)}}<i class="fas fa-check"></i>{{/if}}
+                                {{#if (eq skill.proficient 2)}}<i class="fas fa-check-double"></i>{{/if}}
+                            </div>
+                            <div class="action-pack__skill-label">
+                                {{#with (lookup ../skills s)}}
+                                    <span>{{label}}</span>
+                                {{/with}}
+                            </div>
+                            <div class="flex1 action-pack__skill-bonus">
+                                {{numberFormat total decimals=0 sign=true}}
+                            </div>
+                            <div class="flex1 action-pack__skill-passive">
+                                ({{passive}})
+                            </div>
+                        </a>
+                    {{/each}}
+                </div>
+            </div>
+        {{/inline}}
+
         {{#each actors}}
             <div class="action-pack__actor" data-actor-uuid="{{actor.uuid}}">
                 <h1><a class="action-pack__actor-name">{{name}}</a></h1>
+
+                {{#if needsInitiative}}
+                    <a class="action-pack__initiative flexrow">
+                        <i class="flex0 fas fa-swords action-pack__initiative-icon"></i>
+                        <div>{{localize "action-pack.roll-initiative"}}</div>
+                    </a>
+                {{/if}}
 
                 <div class="action-pack__abilities">
                     {{#each ../abilities as |abl abbr|}}
                         <a class="action-pack__ability" data-ability="{{abbr}}" title="{{abl}}">{{abbr}}</a>                    
                     {{/each}}
                 </div>
+
+                {{#if (eq skillMode "dropdown")}}
+                    {{> skill-container}}
+                {{/if}}
 
                 {{#with sections}}
                     {{#with equipped}}
@@ -109,6 +152,10 @@
                         {{> item-category}}
                     {{/with}}
                 {{/with}}
+
+                {{#if (eq skillMode "append")}}
+                    {{> skill-container}}
+                {{/if}}
             </div>
         {{/each}}
     </div>
