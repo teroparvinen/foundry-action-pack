@@ -669,6 +669,8 @@ async function updateTray() {
             scrollPosition = {};
         }
     });
+    
+    Hooks.call('action-pack.updateTray', html, actors);
 }
 
 Handlebars.registerHelper({
