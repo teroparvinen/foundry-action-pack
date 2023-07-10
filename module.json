@@ -4,13 +4,13 @@
     "description": "Adds an expanding tray for using an actor's items, abilities and spells",
     "authors": [
         {
-            "name": "Tero Parvinen (Whistler#3253)"
+            "name": "Tero Parvinen (tero.p)"
         }
     ],
-    "version": "10.7",
+    "version": "11.1",
     "compatibility": {
-        "minimum": 10,
-        "verified": 10
+        "minimum": 11,
+        "verified": 11
     },
     "relationships": {
         "systems": [{

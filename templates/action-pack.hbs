@@ -59,7 +59,7 @@
         {{/inline}}
 
         {{#*inline "item-group"}}
-            {{#if items.length}}
+            {{#if (or items.length (and uses.maximum showSpellDots))}}
                 <div class="flexrow">
                     <h3>
                         <span>{{localize title}}</span>
@@ -114,8 +114,8 @@
             </div>
         {{/inline}}
 
-        {{#each actors}}
-            <div class="action-pack__actor" data-actor-uuid="{{actor.uuid}}">
+        {{#each actors as |actor|}}
+            <div class="action-pack__actor" data-actor-uuid="{{actor.actor.uuid}}">
                 <h1><a class="action-pack__actor-name">{{name}}</a></h1>
 
                 {{#if needsInitiative}}
@@ -127,7 +127,9 @@
 
                 <div class="action-pack__abilities">
                     {{#each ../abilities as |abl abbr|}}
-                        <a class="action-pack__ability" data-ability="{{abbr}}" title="{{abl}}">{{abbr}}</a>                    
+                        {{#with (lookup actor.actor.system.abilities abbr) as |details|}}
+                            <a class="action-pack__ability" data-ability="{{abbr}}" title="{{abl.label}} {{details.value}} ({{numberFormat details.mod decimals=0 sign=true}} / {{numberFormat details.save decimals=0 sign=true}})">{{abbr}}</a>
+                        {{/with}}
                     {{/each}}
                 </div>
 
@@ -158,6 +160,12 @@
                 {{/if}}
             </div>
         {{/each}}
+
+        {{#unless actors.length}}
+            <div class="action-pack__empty-tray">
+                <i class="fas fa-dice-d20"></i>
+            </div>
+        {{/unless}}
     </div>
 </div>
 

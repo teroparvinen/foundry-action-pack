@@ -56,6 +56,7 @@ Hooks.on("ready", () => {
     currentlyActiveActor = lastKnownActiveActor;
 
     updateCombatStatus();
+    updateTray();
 });
 
 function isTrayAutoHide() {
@@ -68,7 +69,7 @@ function getActiveActors() {
     if (controlled.length) {
         return controlled.map(token => token.actor);
     }
-    if (game.user.character) {
+    if (game.user.character && game.settings.get("action-pack", "assume-default-character")) {
         return [game.user.character];
     }
     return [];
@@ -153,6 +154,20 @@ Hooks.on("init", () => {
                 selected: "action-pack.settings.tray-display-selected"
             },
             type: String
+        }
+    );
+
+    game.settings.register(
+        "action-pack",
+        "assume-default-character",
+        {
+            name: "action-pack.settings.assume-default-character",
+            hint: "action-pack.settings.assume-default-character-hint",
+            scope: "client",
+            config: true,
+            default: true,
+            type: Boolean,
+            onChange: () => updateTray()
         }
     );
   
@@ -537,7 +552,16 @@ async function updateTray() {
         event.preventDefault();
         const itemUuid = event.currentTarget.closest(".item").dataset.itemUuid;
         const item = fromUuid(itemUuid);
-        if ( item ) item.use({}, event);
+        if (item) {
+            if (!game.modules.get("wire")?.active && game.modules.get("itemacro")?.active && game.settings.get("itemacro", "defaultmacro")) {
+                if (item.hasMacro()) {
+                    item.executeMacro();
+                    return false;
+                }
+            }
+
+            item.use({}, event);
+        }
         return false;
     }
 
