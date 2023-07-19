@@ -17,6 +17,10 @@
     width: var(--action-pack-width);
 }
 
+#action-pack.always-on {
+    transition: width 0s;
+}
+
 .action-pack__container {
     position: absolute;
     right: 0;

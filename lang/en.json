@@ -59,6 +59,7 @@
             "tray-display-auto": "Automatic",
             "tray-display-toggle": "Toggle",
             "tray-display-selected": "When token selected",
+            "tray-display-always": "Always show the tray",
             "tray-display-hint": "Toggle - only hide tray when toggled (using hot key) / When token selected - Hide the tray if no tokens are selected, show otherwise / Automatic - Toggle for players, When token selected for the GM",
             "assume-default-character": "Assume default character",
             "assume-default-character-hint": "When no other token is selected, show the tray for the user's default character (usually only set for players). This can help with scenes with no tokens (or a generic party token) visible.",

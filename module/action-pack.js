@@ -55,13 +55,21 @@ Hooks.on("ready", () => {
     lastKnownActiveActor = game.combat?.turns.find(c => c.id == game.combat?.current.combatantId)?.actor;
     currentlyActiveActor = lastKnownActiveActor;
 
-    updateCombatStatus();
-    updateTray();
+    if (isTrayAlwaysOn()) {
+        $('#action-pack').addClass("is-open always-on");
+    }
+
+    updateTrayState();
 });
 
 function isTrayAutoHide() {
     const config = game.settings.get("action-pack", "tray-display");
     return config === "selected" || (config === "auto" && game.user.isGM);
+}
+
+function isTrayAlwaysOn() {
+    const config = game.settings.get("action-pack", "tray-display");
+    return config === "always";
 }
 
 function getActiveActors() {
@@ -76,16 +84,7 @@ function getActiveActors() {
 }
 
 Hooks.on("controlToken", async () => {
-    if (isTrayAutoHide()) {
-        if (getActiveActors().length) {
-            $('#action-pack').addClass("is-open");
-        } else {
-            $('#action-pack').removeClass("is-open");
-        }
-    }
-
-    updateCombatStatus();
-    updateTray();
+    updateTrayState();
 });
 
 Hooks.on("updateActor", (actor) => {
@@ -151,9 +150,14 @@ Hooks.on("init", () => {
             choices: {
                 auto: "action-pack.settings.tray-display-auto",
                 toggle: "action-pack.settings.tray-display-toggle",
-                selected: "action-pack.settings.tray-display-selected"
+                selected: "action-pack.settings.tray-display-selected",
+                always: "action-pack.settings.tray-display-always"
             },
-            type: String
+            type: String,
+            onChange: () => {
+                ui.controls.initialize();
+                updateTrayState();
+            }
         }
     );
 
@@ -167,7 +171,7 @@ Hooks.on("init", () => {
             config: true,
             default: true,
             type: Boolean,
-            onChange: () => updateTray()
+            onChange: () => updateTrayState()
         }
     );
   
@@ -296,8 +300,10 @@ Hooks.on("init", () => {
             { key: "KeyE", modifiers: []}
         ],
         onDown: (ctx) => {
-            $('#action-pack').toggleClass("is-open");
-            $('#action-pack .action-pack__skill-container').removeClass("is-open");
+            if (!isTrayAlwaysOn()) {
+                $('#action-pack').toggleClass("is-open");
+                $('#action-pack .action-pack__skill-container').removeClass("is-open");
+            }
         }
     });
     game.keybindings.register("action-pack", "toggle-skills", {
@@ -334,7 +340,7 @@ Hooks.on("init", () => {
 });
 
 Hooks.on('getSceneControlButtons', (controls) => {
-    if (game.settings.get("action-pack", "use-control-button")) {
+    if (game.settings.get("action-pack", "use-control-button") && !isTrayAlwaysOn()) {
         const token = controls.find((c) => c.name === "token");
         if (token) {
             token.tools.push({
@@ -351,6 +357,25 @@ Hooks.on('getSceneControlButtons', (controls) => {
         }
     }
 });
+
+function updateTrayState() {
+    if (isTrayAutoHide()) {
+        if (getActiveActors().length) {
+            $('#action-pack').addClass("is-open");
+        } else {
+            $('#action-pack').removeClass("is-open");
+        }
+    }
+
+    if (isTrayAlwaysOn()) {
+        $('#action-pack').addClass("is-open always-on");
+    } else {
+        $('#action-pack').removeClass("always-on");
+    }
+
+    updateCombatStatus();
+    updateTray();
+}
 
 async function updateTray() {
     const settingShowNoUses = game.settings.get("action-pack", "show-no-uses");
