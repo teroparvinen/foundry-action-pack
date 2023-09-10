@@ -80,6 +80,10 @@
             "skill-mode-hint": "If \"Collapsible at the top\" is selected, the skill toggle hot key (in control settings) can be used to toggle the skill list open and closed, opening the panel if needed. If skills are at the bottom of the panel, the hotkey automatically scrolls to reveal them.",
             "skill-mode-dropdown": "Collapsible at the top",
             "skill-mode-append": "At the bottom of the panel"
+        },
+        "item-context": {
+            "show": "Show in Action Pack",
+            "hide": "Hide in Action Pack"
         }
     }    
 }

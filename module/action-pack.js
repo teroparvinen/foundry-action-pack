@@ -399,7 +399,7 @@ async function updateTray() {
                     other: { items: [], title: "action-pack.category.other" }
                 }
             },
-            feature: { items: [], title: "action-pack.category.feature" },
+            feature: { items: [], title: "action-pack.category.feature", groups: systemFeatureGroups() },
             spell: {
                 title: "action-pack.category.spell",
                 groups: {
@@ -421,10 +421,19 @@ async function updateTray() {
 
             const hasUses = settingShowNoUses || !uses || uses.available;
 
-            if (hasUses && itemData.activation?.type && itemData.activation.type !== "none") {
+            if (hasUses && itemData.activation?.type && itemData.activation.type !== "none" && !item.getFlag("action-pack", "hidden")) {
                 switch (item.type) {
                 case "feat":
-                    sections.feature.items.push({ item, uses });
+                    const type = item.system.type.value;
+                    const subtype = item.system.type.subtype;
+
+                    if (subtype) {
+                        sections.feature.groups[subtype].items.push({ item, uses });
+                    } else if (type) {
+                        sections.feature.groups[type].items.push({ item, uses });
+                    } else {
+                        sections.feature.items.push({ item, uses });
+                    }
                     break;
                 case "spell":
                     switch (itemData.preparation?.mode) {
@@ -477,10 +486,29 @@ async function updateTray() {
             }
         }
 
+        function systemFeatureGroups() {
+            return Object.entries(CONFIG.DND5E.featureTypes).reduce((prev, cur) => {
+                prev[cur[0]] = {
+                    items: [],
+                    title: cur[1].label
+                }
+                if (cur[1].subtypes) {
+                    for (const sub in cur[1].subtypes) {
+                        prev[sub] = {
+                            items: [],
+                            title: cur[1].subtypes[sub]
+                        }
+                    }
+                }
+                return prev;
+            }, {});
+        }
+
         function removeEmptySections(sections) {
             function hasItems(object) {
                 if (!object || typeof object !== "object") { return false; }
                 const keys = Object.keys(object);
+                if (keys.includes("groups") && Object.values(object.groups).some(g => hasItems(g))) { return true; }
                 if (keys.includes("items")) { return !!object.items.length; }
                 return Object.values(object).some(v => hasItems(v));
             }
@@ -729,5 +757,29 @@ Handlebars.registerHelper({
             slots.push(i < available);
         }
         return slots;
+    }
+});
+
+Hooks.on("dnd5e.getItemContextOptions", (item, options) => {
+    if (item.system.activation?.type && item.system.activation.type !== "none") {
+        if (item.getFlag("action-pack", "hidden")) {
+            options.push({
+                name: "action-pack.item-context.show",
+                icon: "<i class='fas fa-eye'></i>",
+                callback: () => {
+                    item.setFlag("action-pack", "hidden", false);
+                    updateTray();
+                }
+            });
+        } else {
+            options.push({
+                name: "action-pack.item-context.hide",
+                icon: "<i class='fas fa-eye-slash'></i>",
+                callback: () => {
+                    item.setFlag("action-pack", "hidden", true);
+                    updateTray();
+                }
+            });
+        }
     }
 });

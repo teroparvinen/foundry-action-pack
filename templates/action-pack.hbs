@@ -50,12 +50,12 @@
 
         {{#*inline "item-category"}}
             <h2>{{localize title}}</h2>
-            {{#each groups as |group groupName|}}
-                {{> item-group groupName=groupName showSpellDots=../showSpellDots }}
-            {{/each}}
             {{#with items}}
                 {{> item-list }}
             {{/with}}
+            {{#each groups as |group groupName|}}
+                {{> item-group groupName=groupName showSpellDots=../showSpellDots }}
+            {{/each}}
         {{/inline}}
 
         {{#*inline "item-group"}}
