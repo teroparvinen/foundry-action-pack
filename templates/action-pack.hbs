@@ -85,7 +85,7 @@
         {{#*inline "skill-container"}}
             <div class="action-pack__skill-container {{skillMode}} {{#if showSkills}}is-open{{/if}}">
                 <a class="action-pack__skill-header">
-                    Skills
+                    {{ localize 'DND5E.Skills' }}
                     <i class="fas fa-caret-up"></i>
                 </a>
                 <div class="action-pack__skills">
@@ -128,7 +128,7 @@
                 <div class="action-pack__abilities">
                     {{#each ../abilities as |abl abbr|}}
                         {{#with (lookup actor.actor.system.abilities abbr) as |details|}}
-                            <a class="action-pack__ability" data-ability="{{abbr}}" title="{{abl.label}} {{details.value}} ({{numberFormat details.mod decimals=0 sign=true}} / {{numberFormat details.save decimals=0 sign=true}})">{{abbr}}</a>
+                            <a class="action-pack__ability" data-ability="{{abbr}}" title="{{abl.label}} {{details.value}} ({{numberFormat details.mod decimals=0 sign=true}} / {{numberFormat details.save decimals=0 sign=true}})">{{abl.abbreviation}}</a>
                         {{/with}}
                     {{/each}}
                 </div>
