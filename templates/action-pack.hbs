@@ -147,6 +147,11 @@
                     {{#with spell}}
                         {{> item-category showSpellDots=../../../showSpellDots}}
                     {{/with}}
+                    {{#each custom}}
+                    {{#with this}}
+                        {{> item-category}}
+                    {{/with}}
+                    {{/each}}
                     {{#with inventory}}
                         {{> item-category}}
                     {{/with}}

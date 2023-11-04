@@ -421,7 +421,15 @@ async function updateTray() {
 
             const hasUses = settingShowNoUses || !uses || uses.available;
 
+            const customSectionName = item.flags['custom-character-sheet-sections']?.sectionName;
+
             if (hasUses && itemData.activation?.type && itemData.activation.type !== "none" && !item.getFlag("action-pack", "hidden")) {
+                if (customSectionName) {
+                    ensureCustomSectionExists(sections, item);
+                    sections.custom[customSectionName.slugify()].items.push({ item, uses });
+                    continue;
+                }
+
                 switch (item.type) {
                 case "feat":
                     const type = item.system.type.value;
@@ -483,6 +491,17 @@ async function updateTray() {
                 }
             } else if (actor.type === "npc") {
                 sections.passive.items.push({ item, uses });
+            }
+        }
+
+        function ensureCustomSectionExists(sections, item) {
+            const customSectionName = item.flags['custom-character-sheet-sections']?.sectionName;
+            const customSectionSlug = customSectionName.slugify();
+            if (!sections.hasOwnProperty("custom")) {
+                sections.custom = {};
+            }
+            if (!sections.custom.hasOwnProperty(customSectionSlug)) {
+                sections.custom[customSectionSlug] = { items: [], title: customSectionName };
             }
         }
 
