@@ -29,9 +29,18 @@ export const calculateUsesForItem = (item) => {
 function calculateConsumeUses(actor, consume) {
     let available = null;
     let maximum = null;
+	
+	let settingLegendActUses = game.settings.get("action-pack", "show-la-as-la-uses");
+	
     if (consume.type === 'attribute') {
+		
         const value = getProperty(actor.system, consume.target);
-        if (typeof value === 'number') {
+		if(consume.target === 'resources.legact.value' & settingLegendActUses){
+			//return {1,999};
+			available = Math.floor(consume.amount);
+			maximum = Math.floor(actor.system.resources.legact.value);
+			return { available, maximum };
+		}else if (typeof value === 'number') {
             available = value;
         } else {
             available = 0;
