@@ -257,6 +257,19 @@ Hooks.on("init", () => {
   
     game.settings.register(
         "action-pack",
+        "show-la-as-la-uses",
+        {
+            name: "action-pack.settings.show-la-as-la-uses",
+            scope: "client",
+            config: true,
+            default: false,
+            type: Boolean,
+            onChange: () => updateTray()
+        }
+    );
+  
+    game.settings.register(
+        "action-pack",
         "sort-alphabetic",
         {
             name: "action-pack.settings.sort-alphabetic",
