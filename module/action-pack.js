@@ -441,7 +441,7 @@ async function updateTray() {
                     case "always":
                         const isAlways = itemData.preparation?.mode !== "prepared";
                         const isPrepared = itemData.preparation?.prepared;
-                        const isCastableRitual = (canCastUnpreparedRituals && itemData.components?.ritual);
+                        const isCastableRitual = (canCastUnpreparedRituals && itemData.properties?.ritual);
                         const isDisplayableCantrip = itemData.level == 0 && settingShowUnpreparedCantrips;
                         if (isAlways || isPrepared || isCastableRitual || isDisplayableCantrip) {
                             sections.spell.groups[`spell${itemData.level}`].items.push({ item, uses });
